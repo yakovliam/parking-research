@@ -1,4 +1,4 @@
 # python gitignore
 
 # venv
-.venv/
+venv/
