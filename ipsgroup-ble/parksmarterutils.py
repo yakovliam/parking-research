@@ -19,7 +19,6 @@ def get_serial_number(param_bytearray: bytearray) -> str:
 def parse_manufacturer_specific(param_bytearray: bytearray) -> BleModule:
     for s in range(0, 64):
         if param_bytearray[s] != 0 and s < 64:
-            print("ba: " + str(param_bytearray[s + 1]))
             if param_bytearray[s + 1] == -1:
                 i = parse_company(param_bytearray, s)
                 if i == 487:
