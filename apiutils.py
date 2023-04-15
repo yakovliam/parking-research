@@ -9,3 +9,8 @@ class PassportApiResponse:
     def __init__(self, status: PassportApiResponseStatus, response: requests.Response):
         self.status = status
         self.response = response
+
+class PassportMethodReturn:
+    def __init__(self, status: PassportApiResponseStatus, text: str):
+        self.status = status
+        self.text = text

@@ -1,5 +1,5 @@
 import requests
-from apiutils import PassportApiResponse, PassportApiResponseStatus
+from apiutils import *
 
 url = "https://identity.us-east-1.prod.passportlabs.io/token"
 data = {
@@ -23,10 +23,14 @@ import urllib.parse
 data = urllib.parse.urlencode(data)
 headers["content-length"] = str(len(data))
 
-def get_token() -> PassportApiResponse:
+def request_token() -> PassportMethodReturn:
     response = requests.post(url, headers=headers, data=data)
     # if error, return FAILED
     if response.status_code != 200:
-        return PassportApiResponse(PassportApiResponseStatus.FAILED, response)
-    # if success, return SUCCESS
-    return PassportApiResponse(PassportApiResponseStatus.SUCCESS, response)
+        return PassportMethodReturn(PassportApiResponseStatus.FAILED, "")
+
+    # parse the response to get the access_token
+    response_json = response.json()
+    access_token = response_json["access_token"]
+
+    return PassportMethodReturn(PassportApiResponseStatus.SUCCESS, access_token)
