@@ -1,38 +1,40 @@
 import asyncio
 from bleak import BleakScanner
-from parksmarterutils import parse_manufacturer_specific
+from bleak.backends.scanner import AdvertisementData
 
-async def main():  
-    devices = await BleakScanner.discover()
+async def main():
+    stop_event = asyncio.Event()
 
-    print(len(devices))
+    scan_results = []
 
-    # for d in devices:
-    #     uuid = d.address
-    #     uuid_bytes = uuid.encode('utf-8')
-    #     # convert to bytearray
-    #     uuid_bytearray = bytearray(uuid_bytes)
+    def callback(device, advertising_data):
+        scan_results.append((device, advertising_data))
+        pass
 
-    #     result = parse_manufacturer_specific(uuid_bytearray)
-    #     print(d)
+    async with BleakScanner(callback) as scanner:
+        await scanner.start()
 
+        print("Scanning...")
 
+        await asyncio.sleep(5.0)
+        await scanner.stop()
+        # Important! Wait for an event to trigger stop, otherwise scanner
+        # will stop immediately.
+        # await stop_event.wait()
 
-    # async with BleakClient(target_client.address) as client:
-    #     print("Initializing client connection.")
-    #     processManager = ProcessManager(client, TYPE_2_VENDOR_SPECIFIC_CHARACTERISTIC)
-    #     services_collection = await client.get_services()
-    #     # services = services_collection.services
-    #     characteristics = services_collection.characteristics
+    # scanner stops when block exits
+    print("Scan complete.")
+    print("Found %d devices." % len(scan_results))
 
-    #     for c in characteristics:
-    #         print(characteristics.get(c))
+    for data in scan_results:
+        adv_data: AdvertisementData = data[1]
+        if not adv_data:
+            continue
 
-    #     # listen
-    #     await client.start_notify(TYPE_2_VENDOR_SPECIFIC_CHARACTERISTIC, processManager.characteristic_callback)
-    #     await processManager.start()
+        man_data = adv_data.manufacturer_data
+        print(man_data)
+
         
-    #     await asyncio.sleep(30.0)
-    #     await client.stop_notify(TYPE_2_VENDOR_SPECIFIC_CHARACTERISTIC)
-            
+    
+
 asyncio.run(main())
