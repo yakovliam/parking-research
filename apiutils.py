@@ -11,6 +11,15 @@ class PassportApiResponse:
         self.response = response
 
 class PassportMethodReturn:
+
     def __init__(self, status: PassportApiResponseStatus, text: str):
         self.status = status
         self.text = text
+
+    @classmethod
+    def success(cls, text: str):
+        return cls(PassportApiResponseStatus.SUCCESS, text)
+    
+    @classmethod
+    def failed(cls):
+        return cls(PassportApiResponseStatus.FAILED, "")

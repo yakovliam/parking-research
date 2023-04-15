@@ -27,10 +27,10 @@ def request_token() -> PassportMethodReturn:
     response = requests.post(url, headers=headers, data=data)
     # if error, return FAILED
     if response.status_code != 200:
-        return PassportMethodReturn(PassportApiResponseStatus.FAILED, "")
+        return PassportMethodReturn.failed
 
     # parse the response to get the access_token
     response_json = response.json()
     access_token = response_json["access_token"]
 
-    return PassportMethodReturn(PassportApiResponseStatus.SUCCESS, access_token)
+    return PassportMethodReturn.success(access_token)
